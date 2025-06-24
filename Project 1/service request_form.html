@@ -1,0 +1,145 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Service Request Portal</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" />
+  <script src="https://unpkg.com/htmx.org@1.9.2"></script>
+  <style>
+    body {
+      background: linear-gradient(135deg, #4facfe, #00f2fe);
+      min-height: 100vh;
+      margin: 0;
+      padding: 2rem 1rem;
+      font-family: 'Segoe UI', sans-serif;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .app-wrapper {
+      background-color: #ffffffdd;
+      backdrop-filter: blur(6px);
+      border: 2px solid #ffffff88;
+      border-radius: 18px;
+      max-width: 800px;
+      width: 100%;
+      padding: 2rem;
+      box-shadow: 0 10px 24px rgba(0, 0, 0, 0.15);
+    }
+    .form-control, textarea, select {
+      border-radius: 0.5rem;
+    }
+    .request-box {
+      background: #f8faff;
+      border: 1px solid #cce5ff;
+      border-radius: 12px;
+      padding: 1rem;
+      margin-bottom: 1.5rem;
+    }
+    .response-section {
+      background-color: #e9f7ef;
+      border-left: 4px solid #28a745;
+      padding: 0.75rem;
+      margin-top: 1rem;
+      border-radius: 8px;
+    }
+    .btn-delete {
+      background-color: crimson;
+      color: white;
+    }
+    .btn-submit {
+      background-color: #0077cc;
+      color: white;
+    }
+  </style>
+</head>
+<body>
+  <div class="app-wrapper">
+    <div class="alert alert-primary text-center mb-4">
+      👋 <strong>Welcome!</strong> We're glad you're here. Please let us know how we can assist you.
+    </div>
+
+    <h2 class="text-center mb-4">📋 Service Request Portal</h2>
+
+    <form id="request-form" class="mb-4">
+      <input name="name" class="form-control mb-2" placeholder="Your name" required />
+      <input name="email" type="email" class="form-control mb-2" placeholder="Your email" required />
+      <input name="phone" type="tel" class="form-control mb-2" placeholder="Contact number" required />
+      <textarea name="description" class="form-control mb-3" placeholder="Describe your issue" required></textarea>
+      <button type="submit" class="btn btn-submit">Submit Request</button>
+    </form>
+
+    <hr />
+
+    <h4>📄 Submitted Requests</h4>
+    <div id="request-list" class="mt-3"></div>
+  </div>
+
+  <script>
+    const form = document.getElementById('request-form');
+    const list = document.getElementById('request-list');
+    let idCounter = 1;
+
+    form.addEventListener('submit', function (e) {
+      e.preventDefault();
+      const name = form.name.value.trim();
+      const email = form.email.value.trim();
+      const phone = form.phone.value.trim();
+      const description = form.description.value.trim();
+      if (!name || !email || !phone || !description) return;
+
+      const div = document.createElement('div');
+      div.className = 'request-box';
+      div.setAttribute('data-id', idCounter);
+      div.innerHTML = generateRequestHTML(idCounter, name, email, phone, description);
+      list.appendChild(div);
+      form.reset();
+      idCounter++;
+    });
+
+    function generateRequestHTML(id, name, email, phone, description) {
+      return `
+        <strong>${name}</strong> (${email})<br>
+        📞 ${phone}<br>
+        <p>${description}</p>
+        <label>Status:</label>
+        <select class="form-select form-select-sm w-auto d-inline-block mb-2" onchange="handleStatus(${id}, this)">
+          <option value="Pending">Pending</option>
+          <option value="In Progress">In Progress</option>
+          <option value="Resolved">Resolved</option>
+        </select>
+        <button class="btn btn-sm btn-delete float-end" onclick="deleteRequest(${id})">❌ Delete</button>
+        <form onsubmit="submitResponse(${id}); return false;" class="mt-3">
+          <label>Provider Response:</label>
+          <textarea class="form-control mb-2" id="response-input-${id}" rows="2" placeholder="Type your response here..."></textarea>
+          <button type="submit" class="btn btn-outline-success btn-sm">Send Response</button>
+        </form>
+        <div id="response-box-${id}" class="response-section d-none"></div>
+      `;
+    }
+
+    function deleteRequest(id) {
+      const box = document.querySelector(`[data-id="${id}"]`);
+      if (box) box.remove();
+    }
+
+    function handleStatus(id, select) {
+      console.log(`Status for request ${id} updated to: ${select.value}`);
+    }
+
+    function submitResponse(id) {
+      const input = document.getElementById(`response-input-${id}`);
+      const responseBox = document.getElementById(`response-box-${id}`);
+      const text = input.value.trim();
+      if (text) {
+        const greeting = "👋 Hello! Thank you for contacting us. ";
+        responseBox.textContent = `🗨️ ${greeting}${text}`;
+        responseBox.classList.remove('d-none');
+        input.value = '';
+      }
+    }
+  </script>
+</body>
+</html>
