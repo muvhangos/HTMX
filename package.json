@@ -1,0 +1,13 @@
+{
+  "name": "school-application-htmx",
+  "version": "1.0.0",
+  "description": "HTMX-based school application form using Node.js and Express",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "dependencies": {
+    "express": "^4.18.2",
+    "body-parser": "^1.20.2"
+  }
+}
