@@ -1,0 +1,11 @@
+<tr id="student-{{ student.id }}">
+  <td>{{ student.name }}</td>
+  <td>{{ student.age }}</td>
+  <td>{{ student.grade }}</td>
+  <td>{{ student.guardian_name }}</td>
+  <td>{{ student.contact }}</td>
+  <td>
+    <button hx-get="{% url 'update_student' student.id %}" hx-target="#form-modal" hx-swap="innerHTML">Edit</button>
+    <button hx-delete="{% url 'delete_student' student.id %}" hx-target="#student-{{ student.id }}" hx-swap="outerHTML">Delete</button>
+  </td>
+</tr>

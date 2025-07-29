@@ -1,0 +1,8 @@
+<form 
+  hx-post="{% if student %}{% url 'update_student' student.id %}{% else %}{% url 'create_student' %}{% endif %}"
+  hx-target="#student-{{ student.id|default:"table" }}" 
+  hx-swap="outerHTML"
+>
+  {{ form.as_p }}
+  <button type="submit">Save</button>
+</form>
